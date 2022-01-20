@@ -6,7 +6,7 @@ import com.mhmd.countriesapp.business.domain.state.DataState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FavoriteCounty(
+class FavoriteCountry(
     private val countryCacheDatasource: CountryCacheDatasource,
 ) {
 

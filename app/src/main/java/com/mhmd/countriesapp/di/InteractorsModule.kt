@@ -3,9 +3,9 @@ package com.mhmd.countriesapp.di
 import com.mhmd.countriesapp.business.data.cache.abstraction.CountryCacheDatasource
 import com.mhmd.countriesapp.business.data.network.abstraction.CountryNetworkDatasource
 import com.mhmd.countriesapp.business.interactors.countriesList.CountriesList
-import com.mhmd.countriesapp.business.interactors.countriesList.FavoriteCounty
+import com.mhmd.countriesapp.business.interactors.countriesList.FavoriteCountry
 import com.mhmd.countriesapp.business.interactors.countriesList.SearchCountries
-import com.mhmd.countriesapp.business.interactors.favoriteList.FavoriteCountries
+import com.mhmd.countriesapp.business.interactors.countriesList.FavoriteCountries
 import org.koin.dsl.module
 
 
@@ -27,8 +27,8 @@ fun provideSearchCountries(
 
 fun provideFavouriteCountry(
     countryCacheDatasource: CountryCacheDatasource,
-): FavoriteCounty {
-    return FavoriteCounty(
+): FavoriteCountry {
+    return FavoriteCountry(
         countryCacheDatasource = countryCacheDatasource,
     )
 }

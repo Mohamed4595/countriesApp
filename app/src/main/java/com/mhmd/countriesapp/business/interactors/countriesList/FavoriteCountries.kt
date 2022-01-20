@@ -1,4 +1,4 @@
-package com.mhmd.countriesapp.business.interactors.favoriteList
+package com.mhmd.countriesapp.business.interactors.countriesList
 
 import com.mhmd.countriesapp.business.data.cache.abstraction.CountryCacheDatasource
 import com.mhmd.countriesapp.business.domain.model.Country

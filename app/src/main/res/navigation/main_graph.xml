@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/splashFragment">
+    <fragment
+        android:id="@+id/countriesListFragment"
+        android:name="com.mhmd.countriesapp.framework.presentation.countriesList.CountriesListFragment"
+        android:label="CountriesListFragment" >
+        <action
+            android:id="@+id/action_countriesListFragment_to_favoriteListFragment"
+            app:destination="@id/favoriteListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoriteListFragment"
+        android:name="com.mhmd.countriesapp.framework.presentation.countriesList.FavoriteListFragment"
+        android:label="FavoriteListFragment" />
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.mhmd.countriesapp.framework.presentation.splash.SplashFragment"
+        android:label="SplashFragment" >
+        <action
+            android:id="@+id/action_splashFragment_to_countriesListFragment"
+            app:destination="@id/countriesListFragment" />
+    </fragment>
+</navigation>

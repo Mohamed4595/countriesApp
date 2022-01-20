@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Countries app</string>
+    <string name="favorites">Favorites</string>
+    <string name="search">Search</string>
+    <string name="letsStart">Let"'"s Start</string>
+    <string name="countries">Countries</string>
+    <string name="welcomeToMegaTrust">Welcome To Mega Trust</string>
+    <string name="TheresNothingHere">There"'"s nothing here</string>
 </resources>
