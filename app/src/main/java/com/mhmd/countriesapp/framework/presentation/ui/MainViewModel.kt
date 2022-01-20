@@ -1,36 +1,41 @@
-package com.mhmd.countriesapp.framework.presentation.countriesList
+package com.mhmd.countriesapp.framework.presentation.ui
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mhmd.countriesapp.business.domain.model.Country
-import com.mhmd.countriesapp.business.interactors.countriesList.CountriesList
-import com.mhmd.countriesapp.business.interactors.countriesList.FavoriteCountries
-import com.mhmd.countriesapp.business.interactors.countriesList.FavoriteCountry
-import com.mhmd.countriesapp.business.interactors.countriesList.SearchCountries
-import com.mhmd.countriesapp.framework.presentation.countriesList.CountriesListEvent.*
+import com.mhmd.countriesapp.business.interactors.ui.*
+import com.mhmd.countriesapp.framework.presentation.ui.CountriesListEvent.*
 import com.mhmd.countriesapp.framework.presentation.utils.DialogQueue
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
- class CountriesListViewModel
-public constructor(
+class MainViewModel
+constructor(
     private val searchCountries: SearchCountries,
+    private val removeFavoriteCountry: RemoveFavoriteCountry,
     private val countriesList: CountriesList,
     private val favoriteCountry: FavoriteCountry,
     private val favoriteCountries: FavoriteCountries,
 ) : ViewModel() {
 
-    private val _countriesListLive: MutableLiveData<List<Country>> = MutableLiveData()
+    private val _countriesListLive: MutableLiveData<List<Country>> = MutableLiveData(emptyList())
 
     val countriesListLive: LiveData<List<Country>>
         get() = _countriesListLive
 
-    private val _favouriteCountriesListLive: MutableLiveData<List<Country>> = MutableLiveData()
+    private val _countryLive: MutableLiveData<Country> = MutableLiveData()
+
+    val countryLive: LiveData<Country>
+        get() = _countryLive
+
+
+    private val _favouriteCountriesListLive: MutableLiveData<List<Country>> = MutableLiveData(
+        emptyList()
+    )
 
     val favouriteCountriesListLive: LiveData<List<Country>>
         get() = _favouriteCountriesListLive
@@ -38,6 +43,8 @@ public constructor(
     val query = mutableStateOf("")
 
     val loading = mutableStateOf(false)
+    val loadingRefresh = mutableStateOf(false)
+
 
     private var countriesListScrollPosition: Int = 0
 
@@ -75,7 +82,7 @@ public constructor(
         countriesList.execute(
         ).onEach { dataState ->
             loading.value = dataState.loading
-
+            loadingRefresh.value = dataState.loading
             dataState.data?.let { list ->
                 _countriesListLive.value = list
             }
@@ -88,7 +95,6 @@ public constructor(
 
     private fun search() {
 
-        _countriesListLive.value = listOf()
         searchCountries.execute(
             query = query.value,
         ).onEach { dataState ->
@@ -106,7 +112,6 @@ public constructor(
 
     private fun getFavoriteCountries() {
 
-        _favouriteCountriesListLive.value = listOf()
         favoriteCountries.execute(
         ).onEach { dataState ->
             loading.value = dataState.loading
@@ -124,6 +129,7 @@ public constructor(
     fun onChangeCountriesScrollPosition(position: Int) {
         setListScrollPosition(position)
     }
+
     fun onChangeFavouriteCountriesScrollPosition(position: Int) {
         setFavouriteListScrollPosition(position)
     }
@@ -135,37 +141,57 @@ public constructor(
     private fun setListScrollPosition(position: Int) {
         countriesListScrollPosition = position
     }
+
     private fun setFavouriteListScrollPosition(position: Int) {
         favouriteCountriesListScrollPosition = position
     }
+
     private fun setQuery(query: String) {
         this.query.value = query
     }
 
-    fun onFavorite(index: Int){
+    fun onFavorite(id: Int) {
+
+        favoriteCountry.execute(
+            id
+        ).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                setCountryData(it)
+                search()
+
+            }
+
+            dataState.error?.let { error ->
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
+            }
+        }.launchIn(viewModelScope)
+
 
     }
-//    fun onRefresh(newsTitle: String) {
-//        var newsIndex: Int = -1
-//        for (element in news.value) {
-//            if (element.title == newsTitle) {
-//                newsIndex =
-//                    news.value.indexOf(element)
-//                break
-//            }
-//        }
-//        if (newsIndex != -1) {
-//            news.value[newsIndex].isFavorite =
-//                !news.value[newsIndex].isFavorite
-//        } else {
-//            if (selectedNewsItem.value != null) {
-//                selectedNewsItem.value!!.isFavorite = !selectedNewsItem.value!!.isFavorite
-//                setSelectedNewsItem(selectedNewsItem.value!!)
-//            }
-//        }
-//
-//        refreshNews.value =
-//            !refreshNews.value
-//    }
 
+    fun onRemoveFavorite(id: Int) {
+
+        removeFavoriteCountry.execute(
+            id
+        ).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let {
+                getFavoriteCountries()
+                search()
+            }
+
+            dataState.error?.let { error ->
+                dialogQueue.appendErrorMessage("An Error Occurred", error)
+            }
+        }.launchIn(viewModelScope)
+
+
+    }
+
+    fun setCountryData(country: Country) {
+        _countryLive.value = country;
+    }
 }

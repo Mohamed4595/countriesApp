@@ -6,16 +6,23 @@
     app:startDestination="@id/splashFragment">
     <fragment
         android:id="@+id/countriesListFragment"
-        android:name="com.mhmd.countriesapp.framework.presentation.countriesList.CountriesListFragment"
+        android:name="com.mhmd.countriesapp.framework.presentation.ui.CountriesListFragment"
         android:label="CountriesListFragment" >
         <action
             android:id="@+id/action_countriesListFragment_to_favoriteListFragment"
             app:destination="@id/favoriteListFragment" />
+        <action
+            android:id="@+id/action_countriesListFragment_to_countryDetailsFragment"
+            app:destination="@id/countryDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteListFragment"
-        android:name="com.mhmd.countriesapp.framework.presentation.countriesList.FavoriteListFragment"
-        android:label="FavoriteListFragment" />
+        android:name="com.mhmd.countriesapp.framework.presentation.ui.FavoriteListFragment"
+        android:label="FavoriteListFragment" >
+        <action
+            android:id="@+id/action_favoriteListFragment_to_countryDetailsFragment"
+            app:destination="@id/countryDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.mhmd.countriesapp.framework.presentation.splash.SplashFragment"
@@ -24,4 +31,8 @@
             android:id="@+id/action_splashFragment_to_countriesListFragment"
             app:destination="@id/countriesListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/countryDetailsFragment"
+        android:name="com.mhmd.countriesapp.framework.presentation.ui.CountryDetailsFragment"
+        android:label="CountryDetailsFragment" />
 </navigation>

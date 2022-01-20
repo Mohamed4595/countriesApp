@@ -2,10 +2,7 @@ package com.mhmd.countriesapp.di
 
 import com.mhmd.countriesapp.business.data.cache.abstraction.CountryCacheDatasource
 import com.mhmd.countriesapp.business.data.network.abstraction.CountryNetworkDatasource
-import com.mhmd.countriesapp.business.interactors.countriesList.CountriesList
-import com.mhmd.countriesapp.business.interactors.countriesList.FavoriteCountry
-import com.mhmd.countriesapp.business.interactors.countriesList.SearchCountries
-import com.mhmd.countriesapp.business.interactors.countriesList.FavoriteCountries
+import com.mhmd.countriesapp.business.interactors.ui.*
 import org.koin.dsl.module
 
 
@@ -14,6 +11,7 @@ val InteractorsModule = module {
     single { provideFavouriteCountry(get()) }
     single { provideCountriesList(get(), get()) }
     single { provideFavouriteCountries(get()) }
+    single { provideRemoveFavouriteCountry(get()) }
 
 }
 
@@ -21,6 +19,14 @@ fun provideSearchCountries(
     countryCacheDatasource: CountryCacheDatasource,
 ): SearchCountries {
     return SearchCountries(
+        countryCacheDatasource = countryCacheDatasource,
+    )
+}
+
+fun provideRemoveFavouriteCountry(
+    countryCacheDatasource: CountryCacheDatasource,
+): RemoveFavoriteCountry {
+    return RemoveFavoriteCountry(
         countryCacheDatasource = countryCacheDatasource,
     )
 }

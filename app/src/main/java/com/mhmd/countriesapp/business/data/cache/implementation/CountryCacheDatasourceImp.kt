@@ -4,10 +4,11 @@ import com.mhmd.countriesapp.business.data.cache.abstraction.CountryCacheDatasou
 import com.mhmd.countriesapp.business.domain.model.Country
 import com.mhmd.countriesapp.framework.datasource.cache.abstraction.CountryDaoService
 
-class CountryCacheDatasourceImp(private val CountryDaoService: CountryDaoService) : CountryCacheDatasource {
+class CountryCacheDatasourceImp(private val CountryDaoService: CountryDaoService) :
+    CountryCacheDatasource {
 
     override suspend fun insertCountry(country: Country): Long {
-      return CountryDaoService.insertCountry(country)
+        return CountryDaoService.insertCountry(country)
     }
 
     override suspend fun getCountry(id: Int): Country? {
@@ -25,4 +26,9 @@ class CountryCacheDatasourceImp(private val CountryDaoService: CountryDaoService
     override suspend fun getFavouriteCountries(): List<Country> {
         return CountryDaoService.getFavouriteCountries()
     }
+
+    override suspend fun updateFavourite(isFavorite: Int, id: Int): Int {
+        return CountryDaoService.updateFavourite(isFavorite, id)
+    }
+
 }

@@ -14,6 +14,6 @@ data class Country(
 
     var countryFlag: String?,
 
-    var isFavorite: Boolean?,
+    var isFavorite: Int?,
 
     )

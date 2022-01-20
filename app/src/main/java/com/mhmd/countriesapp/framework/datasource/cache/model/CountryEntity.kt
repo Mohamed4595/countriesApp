@@ -34,6 +34,6 @@ data class CountryEntity(
 
     // Value from API
     @ColumnInfo(name = "isFavorite")
-    var isFavorite: Boolean?,
+    var isFavorite: Int?,
 
     )

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.ExperimentalComposeUiApi
 import com.mhmd.countriesapp.R
-import com.mhmd.countriesapp.framework.presentation.countriesList.CountriesListViewModel
+import com.mhmd.countriesapp.framework.presentation.ui.MainViewModel
 import com.mhmd.countriesapp.framework.presentation.utils.ConnectivityManager
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -13,7 +13,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
 class MainActivity : AppCompatActivity() {
 
     val connectivityManager: ConnectivityManager by inject()
-    private val viewModel by viewModel<CountriesListViewModel>()
+    private val viewModel by viewModel<MainViewModel>()
 
     override fun onStart() {
         super.onStart()

@@ -14,7 +14,7 @@ class CountryDtoMapper : ModelMapper<CountryDto, Country> {
             countryCode = model.countryCode,
             countryCallingCode = model.countryCallingCode,
             countryFlag = model.countryFlag,
-            isFavorite = false
+            isFavorite = 0
         )
     }
 

@@ -68,7 +68,7 @@ fun CountriesAppTheme(
     } else {
         systemUiController.setStatusBarColor(
             color = if (isNoStatusBar) BackgroundLight else PrimaryColorLight,
-            darkIcons = false
+            darkIcons = isNoStatusBar
         )
         systemUiController.setNavigationBarColor(
             color = BackgroundLight,

@@ -19,4 +19,7 @@ interface CountryCacheDatasource {
 
     suspend fun getFavouriteCountries(
     ): List<Country>
+
+    suspend fun updateFavourite(isFavorite: Int, id: Int): Int
+
 }

@@ -1,4 +1,4 @@
-package com.mhmd.countriesapp.business.interactors.countriesList
+package com.mhmd.countriesapp.business.interactors.ui
 
 import com.mhmd.countriesapp.business.data.cache.abstraction.CountryCacheDatasource
 import com.mhmd.countriesapp.business.domain.model.Country
@@ -21,11 +21,6 @@ class FavoriteCountries(
                 // There was a network issue
                 e.printStackTrace()
             }
-
-            if (country.isNotEmpty())
-                country.forEach {
-                    it.isFavorite = true
-                }
 
             emit(DataState.success(country))
         } catch (e: Exception) {

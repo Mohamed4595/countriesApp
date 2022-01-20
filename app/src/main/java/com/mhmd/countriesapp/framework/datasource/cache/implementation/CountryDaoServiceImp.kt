@@ -31,4 +31,7 @@ class CountryDaoServiceImp(
         return CountryEntityMapper.fromEntityList(CountryDao.getFavouriteCountries())
     }
 
+    override suspend fun updateFavourite(isFavorite: Int,id: Int): Int {
+        return CountryDao.updateFavourite(isFavorite,id)
+    }
 }

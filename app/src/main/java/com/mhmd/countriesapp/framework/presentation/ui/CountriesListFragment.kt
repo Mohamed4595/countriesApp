@@ -1,35 +1,31 @@
-package com.mhmd.countriesapp.framework.presentation.countriesList
+package com.mhmd.countriesapp.framework.presentation.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mhmd.countriesapp.R
 import com.mhmd.countriesapp.framework.presentation.components.LoadingCountriesListShimmer
 import com.mhmd.countriesapp.framework.presentation.components.CountryCard
 import com.mhmd.countriesapp.framework.presentation.components.NothingHere
 import com.mhmd.countriesapp.framework.presentation.components.SearchAppBar
 import com.mhmd.countriesapp.framework.presentation.theme.CountriesAppTheme
+import com.mhmd.countriesapp.framework.presentation.ui.CountriesListEvent.CountriesEvent
 import com.mhmd.countriesapp.framework.presentation.utils.ConnectivityManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
@@ -47,39 +43,47 @@ class CountriesListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-         val viewModel by sharedViewModel<CountriesListViewModel>()
+        val mainViewModel by sharedViewModel<MainViewModel>()
 
         return ComposeView(requireContext()).apply {
             setContent {
 
-                val countries = viewModel.countriesListLive.value
+                val countries = mainViewModel.countriesListLive.value
 
-                val query = viewModel.query.value
+                val query = mainViewModel.query.value
 
-                val loading = viewModel.loading.value
+                val loadingRefresh = mainViewModel.loading.value
 
-                val dialogQueue = viewModel.dialogQueue
+                val loading = mainViewModel.loading.value
+
+                val dialogQueue = mainViewModel.dialogQueue
 
                 CountriesAppTheme(
                     isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                     dialogQueue = dialogQueue.queue.value,
                 ) {
-                    Box {
-                        Column(
-                            modifier = Modifier.background(
-                                MaterialTheme.colors.background
-                            )
+                    Column(
+                        modifier = Modifier.background(
+                            MaterialTheme.colors.background
+                        )
+                    ) {
+                        SearchAppBar(
+                            query = query,
+                            onQueryChanged = mainViewModel::onQueryChanged,
+                            onExecuteSearch = { mainViewModel.onTriggerEvent(CountriesListEvent.SearchEvent) },
+                            onFavoriteList = {
+                                findNavController().navigate(
+                                    R.id.action_countriesListFragment_to_favoriteListFragment
+                                )
+                            },
+                        )
+                        SwipeRefresh(
+                            state = rememberSwipeRefreshState(loadingRefresh),
+                            onRefresh = {
+                                mainViewModel.query.value = ""
+                                mainViewModel.onTriggerEvent(CountriesEvent)
+                            },
                         ) {
-                            SearchAppBar(
-                                query = query,
-                                onQueryChanged = viewModel::onQueryChanged,
-                                onExecuteSearch = { viewModel.onTriggerEvent(CountriesListEvent.SearchEvent) },
-                                onFavoriteList = {
-                                    findNavController().navigate(
-                                        R.id.action_countriesListFragment_to_favoriteListFragment
-                                    )
-                                },
-                            )
                             if (loading && countries!!.isEmpty()) {
                                 LoadingCountriesListShimmer(imageHeight = 50.dp)
                             } else if (countries!!.isEmpty()) {
@@ -89,30 +93,19 @@ class CountriesListFragment : Fragment() {
                                     itemsIndexed(
                                         items = countries
                                     ) { index, country ->
-                                        viewModel.onChangeCountriesScrollPosition(index)
+                                        mainViewModel.onChangeCountriesScrollPosition(index)
                                         CountryCard(
                                             country = country,
-                                            index = index,
-                                            isFavorite = country.isFavorite!!,
-                                            onFavoriteClick = viewModel::onFavorite
+                                            onFavoriteClick = mainViewModel::onFavorite,
+                                            onClick = {
+                                                mainViewModel.setCountryData(country = country)
+                                                findNavController().navigate(
+                                                    R.id.action_countriesListFragment_to_countryDetailsFragment
+                                                )
+                                            }, query = query
                                         )
                                     }
                                 }
-                            }
-                        }
-
-                        if (loading && countries!!.isNotEmpty()) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colors.surface)
-                                    .align(alignment = Alignment.BottomCenter)
-                                    .padding(vertical = 16.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                CircularProgressIndicator(
-                                    color = MaterialTheme.colors.onSurface
-                                )
                             }
                         }
                     }
@@ -120,4 +113,5 @@ class CountriesListFragment : Fragment() {
             }
         }
     }
+
 }

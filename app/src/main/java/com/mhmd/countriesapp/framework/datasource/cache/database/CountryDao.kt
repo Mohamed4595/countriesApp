@@ -9,7 +9,7 @@ import com.mhmd.countriesapp.framework.datasource.cache.model.CountryEntity
 @Dao
 interface CountryDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCountry(country: CountryEntity): Long
 
     @Query("SELECT * FROM countries WHERE id = :id")
@@ -39,11 +39,13 @@ interface CountryDao {
     @Query(
         """
         SELECT * FROM countries 
-        WHERE isFavorite     
+        WHERE isFavorite = 1
         ORDER BY id
     """
     )
     suspend fun getFavouriteCountries(
     ): List<CountryEntity>
 
+    @Query("UPDATE countries SET isFavorite = :isFavorite WHERE id =:id")
+    fun updateFavourite(isFavorite: Int, id: Int): Int
 }

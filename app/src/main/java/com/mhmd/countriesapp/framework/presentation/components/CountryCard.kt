@@ -2,6 +2,7 @@ package com.mhmd.countriesapp.framework.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
@@ -46,8 +50,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun CountryCard(
     country: Country,
-    isFavorite: Boolean = false,
-    index: Int,
+    query: String,
+    onClick: () -> Unit,
     onFavoriteClick: (Int) -> Unit,
 ) {
     Card(
@@ -59,7 +63,8 @@ fun CountryCard(
             )
             .background(Color.Transparent)
             .fillMaxWidth()
-            .height(50.dp),
+            .height(50.dp)
+            .clickable(onClick = onClick),
         elevation = 8.dp,
     ) {
 
@@ -82,55 +87,83 @@ fun CountryCard(
                 verticalAlignment = Alignment.CenterVertically,
 
                 ) {
-            Image(
-                painter = rememberImagePainter(
-                    data = if (country.countryFlag == null) "" else Image_URL + country.countryFlag,
-                    builder = {
-                        crossfade(1000)
-                        error(R.drawable.mega_logo)
-                        // placeholder(R.drawable.app_logo)
-                        //transformations(CircleCropTransformation())
-                    }
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .width(30.dp)
-                    .height(30.dp)
-                    .clip(RoundedCornerShape(30.dp)),
-                contentScale = ContentScale.Crop,
-
-                )
-            Text(
-                text = if (country.countryCallingCode == null) "" else country.countryCallingCode.toString(),
-                maxLines = 1, overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .wrapContentWidth(Alignment.Start),
-                style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface)
-            )
-            Text(
-                text = if (country.enName == null) "" else country.enName.toString(),
-                maxLines = 1, overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .wrapContentWidth(Alignment.Start),
-                style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.onSurface)
-            )
-        }
-                IconButton(
+                Image(
+                    painter = rememberImagePainter(
+                        data = if (country.countryFlag == null) "" else Image_URL + country.countryFlag,
+                        builder = {
+                            crossfade(1000)
+                            error(R.drawable.mega_logo)
+                            // placeholder(R.drawable.app_logo)
+                            //transformations(CircleCropTransformation())
+                        }
+                    ),
+                    contentDescription = null,
                     modifier = Modifier
-                        .width(40.dp)
-                        .height(30.dp),
-                    onClick = { onFavoriteClick(index) },
-                ) {
-                    Icon(if(isFavorite) Icons.Filled.Star else
-                        Icons.Outlined.StarBorder,
-                        "",
-                        tint = StarColor
+                        .width(30.dp)
+                        .height(30.dp)
+                        .clip(RoundedCornerShape(30.dp)),
+                    contentScale = ContentScale.Crop,
+
                     )
-                }
+                Text(
+                    text = if (country.countryCallingCode == null) "" else country.countryCallingCode.toString(),
+                    maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .wrapContentWidth(Alignment.Start),
+                    style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface)
+                )
+                Text(
+                    text =
+                    buildAnnotatedString {
+                        if (country.enName == null) {
+                            append("")
+                        } else {
+                            var index: Int = 0
+                            if (query.isNotEmpty()) {
+                                country.enName!!.forEach {
+                                    if (query.length > index) {
+                                        if (it.lowercase() == query[index].lowercase()) {
+                                            withStyle(style = SpanStyle(color = StarColor)) {
+                                                append(it)
+                                            }
+                                            index++
+                                        } else {
+                                            append(it)
+                                        }
+                                    } else {
+                                        append(it)
+                                    }
+                                }
+                            } else {
+                                append(country.enName!!)
+
+                            }
+
+                        }
+                    },
+                    maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .wrapContentWidth(Alignment.Start),
+                    style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.onSurface)
+                )
+            }
+            IconButton(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(30.dp),
+                onClick = { onFavoriteClick(country.id!!) },
+            ) {
+                Icon(
+                    if (country.isFavorite == 1) Icons.Filled.Star else
+                        Icons.Outlined.StarBorder,
+                    "",
+                    tint = StarColor
+                )
             }
         }
+    }
 
 
 }

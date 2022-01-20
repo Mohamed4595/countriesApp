@@ -11,7 +11,7 @@ interface CountryDaoService {
     ): Country?
 
     suspend fun searchCountries(
-    query: String
+        query: String
     ): List<Country>
 
     suspend fun getAllCountries(
@@ -19,5 +19,7 @@ interface CountryDaoService {
 
     suspend fun getFavouriteCountries(
     ): List<Country>
+
+    suspend fun updateFavourite(isFavorite: Int, id: Int): Int
 
 }

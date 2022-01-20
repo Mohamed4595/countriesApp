@@ -1,4 +1,4 @@
-package com.mhmd.countriesapp.business.interactors.countriesList
+package com.mhmd.countriesapp.business.interactors.ui
 
 import com.mhmd.countriesapp.business.data.cache.abstraction.CountryCacheDatasource
 import com.mhmd.countriesapp.business.data.network.abstraction.CountryNetworkDatasource
@@ -27,12 +27,10 @@ class CountriesList(
             if (countries.isNotEmpty())
                 countries.forEach {
                     var country = countryCacheDatasource.getCountry(it.id!!)
-                    if (country != null) {
-                        it.isFavorite = country.isFavorite;
+                    if (country == null) {
+                        it.isFavorite = 0
                         countryCacheDatasource.insertCountry(it)
-                    } else {
-                        it.isFavorite = false
-                        countryCacheDatasource.insertCountry(it)
+                     //countryCacheDatasource.insertCountry(it)
                     }
                 }
             // emit List<Country> from cache
